@@ -1,6 +1,15 @@
 import * as tmi from 'tmi.js';
 
-export async function init(channel: string) {
+export async function init(
+  onCommand: (
+    target: string,
+    context: tmi.ChatUserstate,
+    msg: string,
+    self: boolean
+  ) => void
+) {
+  const channel = process.env.GATSBY_CHANNEL as string;
+
   const client = new tmi.client({
     identity: {
       username: process.env.GATSBY_USERNAME,
@@ -13,15 +22,7 @@ export async function init(channel: string) {
     if (self || !context.username) {
       return;
     }
-
-    const commandName = msg.trim();
-
-    if (commandName === '!dice') {
-      client.say(target, `You rolled a 1`);
-      console.log(`* Executed ${commandName} command`);
-    } else {
-      console.log(`* Unknown command ${commandName}`);
-    }
+    onCommand(target, context, msg, self);
   });
 
   client.on('connected', (addr, port) => {
