@@ -1,13 +1,10 @@
-import * as dotenv from 'dotenv';
 import * as tmi from 'tmi.js';
 
 export async function init(channel: string) {
-  dotenv.config();
-
   const client = new tmi.client({
     identity: {
-      username: process.env.TW_USERNAME,
-      password: process.env.TW_PASSWORD,
+      username: process.env.GATSBY_USERNAME,
+      password: process.env.GATSBY_PASSWORD,
     },
     channels: [channel],
   });

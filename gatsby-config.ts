@@ -1,4 +1,7 @@
-import type { GatsbyConfig } from "gatsby";
+import type { GatsbyConfig } from 'gatsby';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const config: GatsbyConfig = {
   siteMetadata: {
@@ -6,8 +9,8 @@ const config: GatsbyConfig = {
     siteUrl: `https://www.yourdomain.tld`,
   },
   graphqlTypegen: true,
-  plugins: ["gatsby-plugin-sass"],
-  pathPrefix: "/LetsTrawing",
+  plugins: ['gatsby-plugin-sass'],
+  pathPrefix: '/LetsTrawing',
 };
 
 export default config;
