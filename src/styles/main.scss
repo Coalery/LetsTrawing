@@ -1,0 +1,26 @@
+$len: 48px;
+$columnsCount: 11;
+
+$paletteHeight: calc($len * 2 + 4px);
+
+.draw-space-container {
+  height: calc(100vh - 48px - $paletteHeight);
+}
+
+.color-palette-container {
+  $paletteWidth: calc($len * $columnsCount + 4px * ($columnsCount - 1));
+
+  display: grid;
+  width: $paletteWidth;
+  height: $paletteHeight;
+  margin: 0px 0px 0px calc(100vw / 2 - $paletteWidth / 2);
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat($columnsCount, 1fr);
+  row-gap: 4px;
+  column-gap: 4px;
+
+  input[type="color"] {
+    width: $len;
+    height: $len;
+  }
+}
