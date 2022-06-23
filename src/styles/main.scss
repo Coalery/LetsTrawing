@@ -1,5 +1,5 @@
 $len: 48px;
-$columnsCount: 11;
+$columnsCount: 13;
 
 $paletteHeight: calc($len * 2 + 4px);
 
@@ -33,5 +33,13 @@ $paletteHeight: calc($len * 2 + 4px);
   input[type="color"] {
     width: $len;
     height: $len;
+  }
+
+  & .thickness {
+    background-color: white;
+    border: none;
+    padding: 0px;
+    grid-column: ($columnsCount - 1) / span 2;
+    grid-row: 1 / span 2;
   }
 }

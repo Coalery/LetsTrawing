@@ -3,10 +3,11 @@ import React, { createRef, useEffect } from 'react';
 
 type DrawSpace = {
   color: string;
+  thickness: number;
   emitter: EventEmitter;
 };
 
-export function DrawSpace({ color, emitter }: DrawSpace) {
+export function DrawSpace({ color, thickness, emitter }: DrawSpace) {
   const canvasRef = createRef<HTMLCanvasElement>();
   let pos = {
     drawable: false,
@@ -17,6 +18,9 @@ export function DrawSpace({ color, emitter }: DrawSpace) {
 
   const initDraw = (event: MouseEvent) => {
     ctx.strokeStyle = color;
+    ctx.lineWidth = thickness;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
     pos = { drawable: true, ...getPosition(event) };
   };
@@ -67,7 +71,7 @@ export function DrawSpace({ color, emitter }: DrawSpace) {
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', finishDraw);
     canvas.addEventListener('mouseout', finishDraw);
-  }, [color]);
+  }, [color, thickness]);
 
   return <canvas className="drawing-canvas" ref={canvasRef} />;
 }

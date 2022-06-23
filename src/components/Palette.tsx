@@ -1,12 +1,19 @@
 import classNames from 'classnames';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, WheelEvent } from 'react';
 
 type PaletteProps = {
   onColorSelect: (color: string) => void;
   onErase: () => void;
+  setThickness: (change: (thickness: number) => number) => void;
+  thickness: number;
 };
 
-export function Palette({ onColorSelect, onErase }: PaletteProps) {
+export function Palette({
+  onColorSelect,
+  onErase,
+  setThickness,
+  thickness,
+}: PaletteProps) {
   const cursorRef = useRef(0);
   const defaultColors = [
     'red',
@@ -28,6 +35,25 @@ export function Palette({ onColorSelect, onErase }: PaletteProps) {
   const _onColorSelect = (color: string, i: number, j: number) => {
     setPos({ i, j });
     onColorSelect(color);
+  };
+
+  const increaseThickness = () => {
+    setThickness((thickness) => {
+      if (thickness <= 1) return thickness;
+      return thickness - 1;
+    });
+  };
+
+  const decreaseThickness = () => {
+    setThickness((thickness) => {
+      if (thickness >= 64) return thickness;
+      return thickness + 1;
+    });
+  };
+
+  const onWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (event.deltaY > 0) increaseThickness();
+    if (event.deltaY < 0) decreaseThickness();
   };
 
   return (
@@ -71,16 +97,21 @@ export function Palette({ onColorSelect, onErase }: PaletteProps) {
       <button className="color-palette-item eraser" onClick={onErase}>
         <svg
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           stroke="#000000"
           fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <path d="M19 19h-11l-4 -4a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9 9" />
           <line x1="18" y1="12.3" x2="11.7" y2="6" />
         </svg>
       </button>
+      <div className="thickness" onWheel={onWheel}>
+        <svg width="100" viewBox="0 0 100 100">
+          <circle cx="50%" cy="50%" r={thickness / 2} />
+        </svg>
+      </div>
     </div>
   );
 }

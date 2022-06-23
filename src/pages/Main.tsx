@@ -10,6 +10,7 @@ type MainParams = {
 
 export default function Main({ current }: MainParams) {
   const [color, setColor] = useState('black');
+  const [thickness, setThickness] = useState(5);
 
   const emitter = new EventEmitter();
   const onErase = () => {
@@ -18,8 +19,13 @@ export default function Main({ current }: MainParams) {
 
   return (
     <div className="draw-space-container">
-      <DrawSpace color={color} emitter={emitter} />
-      <Palette onColorSelect={setColor} onErase={onErase} />
+      <DrawSpace color={color} thickness={thickness} emitter={emitter} />
+      <Palette
+        onColorSelect={setColor}
+        onErase={onErase}
+        setThickness={setThickness}
+        thickness={thickness}
+      />
     </div>
   );
 }
