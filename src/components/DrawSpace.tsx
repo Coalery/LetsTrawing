@@ -1,10 +1,12 @@
-import React, { createRef, useCallback, useEffect } from 'react';
+import EventEmitter from 'events';
+import React, { createRef, useEffect } from 'react';
 
 type DrawSpace = {
   color: string;
+  emitter: EventEmitter;
 };
 
-export function DrawSpace({ color }: DrawSpace) {
+export function DrawSpace({ color, emitter }: DrawSpace) {
   const canvasRef = createRef<HTMLCanvasElement>();
   let pos = {
     drawable: false,
@@ -44,6 +46,12 @@ export function DrawSpace({ color }: DrawSpace) {
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
   };
+
+  emitter.on('erase', () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
 
   useEffect(() => {
     handleResize();
