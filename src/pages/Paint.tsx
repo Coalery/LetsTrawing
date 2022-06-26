@@ -8,7 +8,7 @@ type MainParams = {
   current: ChatData | null;
 };
 
-export default function Main({ current }: MainParams) {
+export default function Paint({ current }: MainParams) {
   const [color, setColor] = useState('black');
   const [thickness, setThickness] = useState(5);
 
