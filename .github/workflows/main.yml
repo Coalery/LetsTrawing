@@ -16,6 +16,7 @@ jobs:
           access-token: ${{ secrets.API_KEY }}
           deploy-branch: gh-pages
           skip-publish: false
+        env:
           GATSBY_USERNAME: ${{ secrets.USERNAME }}
           GATSBY_PASSWORD: ${{ secrets.PASSWORD }}
           GATSBY_CHANNEL: ${{ secrets.CHANNEL }}
