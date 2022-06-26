@@ -1,13 +1,14 @@
 import * as tmi from 'tmi.js';
+import { Message } from '../interfaces/ChatData';
 
 type onCommandFunction = (context: {
-  target: string;
+  channel: string;
   state: tmi.ChatUserstate;
-  msg: string;
+  msg: Message;
   self: boolean;
 }) => void;
 
-const channel = process.env.GATSBY_CHANNEL as string;
+export const channel = process.env.GATSBY_CHANNEL as string;
 const client = new tmi.client({
   identity: {
     username: process.env.GATSBY_USERNAME,
@@ -15,6 +16,15 @@ const client = new tmi.client({
   },
   channels: [channel],
 });
+
+function parseCommand(originMessage: string): Message {
+  const splittedMeessage = originMessage.split(' ');
+
+  return {
+    command: splittedMeessage[0],
+    args: splittedMeessage.length === 1 ? [] : splittedMeessage.slice(1),
+  };
+}
 
 export async function send(message: string) {
   await client.say(channel, message);
@@ -24,17 +34,16 @@ export async function whisper(target: string, message: string) {
   await client.whisper(target, message);
 }
 
-export async function init(onCommand: onCommandFunction) {
-  client.on('message', (target, state, msg, self) => {
+export async function init(onCommand: onCommandFunction): Promise<void> {
+  client.on('message', (channel, state, msg, self) => {
     if (self || !state.username) {
       return;
     }
-    onCommand({ target, state, msg, self });
-  });
+    if (msg[0] != '!') return;
 
-  client.on('connected', (addr, port) => {
-    console.log(`* Connected to ${addr}:${port}`);
+    onCommand({ channel, state, msg: parseCommand(msg), self });
   });
 
   await client.connect();
+  console.log('Connected!');
 }
