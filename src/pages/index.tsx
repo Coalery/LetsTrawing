@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChatData } from '../interfaces/ChatData';
 
 import { channel, init, whisper } from '../twitch';
@@ -7,9 +7,10 @@ import TextOnly from './TextOnly';
 
 import '../styles/main.scss';
 
-type State = 'loading' | 'wait-start' | 'progressing';
+type State = 'loading' | 'otp' | 'wait-start' | 'progressing';
 
 function IndexPage() {
+  const otp = useRef<string | null>(null);
   const [state, setState] = useState<State>('loading');
   const [remained, setRemained] = useState<number>(-1);
   const [current, setCurrent] = useState<ChatData | null>(null);
@@ -17,7 +18,12 @@ function IndexPage() {
   useEffect(() => {
     init(({ channel, state, msg, self }) =>
       setCurrent({ channel, state, msg, self })
-    ).then(() => setState('wait-start'));
+    ).then(() => {
+      otp.current = Math.floor(Math.random() * 1000000)
+        .toString()
+        .padStart(6, '0');
+      setState('otp');
+    });
   }, []);
 
   useEffect(() => {
@@ -54,10 +60,26 @@ function IndexPage() {
       }
 
       const remained = parseInt(current.msg.args[0]);
+
+      if (remained < 1 || remained > 100) {
+        whisper(channel, '1부터 100 사이의 횟수를 입력해주세요!');
+        return;
+      }
+
       setState('progressing');
       setRemained(remained);
 
       return;
+    }
+
+    if (state === 'otp' && command === '!인증') {
+      if (current.state.username !== channel) return;
+      if (current.state['message-type'] !== 'chat') return;
+      if (args.length < 1) return;
+      if (args[0].length != 6) return;
+      if (args[0] !== otp.current) return;
+
+      setState('wait-start');
     }
   }, [current]);
 
@@ -67,6 +89,14 @@ function IndexPage() {
 
       {state === 'loading' ? (
         <TextOnly title="로딩중입니다. 잠시만 기다려주세요!" />
+      ) : state === 'otp' ? (
+        <TextOnly
+          title="스트리머 본인임을 인증해주세요!"
+          subtitles={[
+            `채팅창에 스트리머 본인(${channel})이 '!인증 ${otp.current}'를 입력해주세요.`,
+            '무분별한 귓속말 전송을 막기 위한 수단이에요.',
+          ]}
+        />
       ) : state === 'wait-start' ? (
         <TextOnly
           title="게임 시작을 기다리고 있어요."
