@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunklets_trawing=self.webpackChunklets_trawing||[]).push([[485],{264:function(e,t,n){n.r(t),n.d(t,{default:function(){return u}});var l=n(7294);function u(e){var t=e.title,n=e.subtitles;return l.createElement("div",{className:"text-only-page"},l.createElement("h1",null,t),null==n?void 0:n.map((function(e,t){return l.createElement("p",{key:"subtitle-"+t},e)})))}}}]);
+//# sourceMappingURL=component---src-pages-text-only-tsx-1220acb12bb2c33f6377.js.map
