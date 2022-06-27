@@ -26,7 +26,7 @@ export default function Paint({ remained, current, onAnswer }: MainParams) {
 
   useEffect(() => {
     if (!answer && remained > 0) {
-      whisper(channel, '문제를 출제해주세요!');
+      whisper(answerUser ?? channel, '문제를 출제해주세요!');
     }
   }, [answer]);
 
@@ -37,6 +37,7 @@ export default function Paint({ remained, current, onAnswer }: MainParams) {
     if (command === '!정답') {
       if (!answer) return;
       if (args.length < 1) return;
+      if (current.state.username === answerUser) return;
 
       const userAnswer = args.join('');
       if (answer !== userAnswer) return;
@@ -50,10 +51,13 @@ export default function Paint({ remained, current, onAnswer }: MainParams) {
     if (command === '!출제') {
       if (answer) return;
       if (args.length < 1) return;
-      if (current.state.username !== channel) return;
-
-      setAnswer(args.join(''));
-      setAnswerUser(null);
+      if (
+        current.state.username === (answerUser ?? channel) ||
+        current.state.username === channel
+      ) {
+        setAnswer(args.join(''));
+        setAnswerUser(current.state.username);
+      }
     }
   }, [current]);
 
@@ -75,8 +79,14 @@ export default function Paint({ remained, current, onAnswer }: MainParams) {
           : '문제를 출제해주세요!'
       }
       subtitles={[
-        "아까 귓속말을 보냈던 '러리'라는 유저에게 '!출제 [문제]'를 보내주세요.",
+        ...(answerUser
+          ? [
+              `${answerUser}님에게 아까 귓속말을 보냈던 '러리'가 귓속말을 보냈을 거에요.`,
+              "그 유저에게 '!출제 [문제]'를 보내주세요. 정답자가 계속 출제하지 않는다면, 스트리머도 출제할 수 있어요.",
+            ]
+          : ["아까 귓속말을 보냈던 '러리'에게 '!출제 [문제]'를 보내주세요."]),
         '띄어쓰기 여부는 상관 없으니, 원하시는 대로 입력해주시면 됩니다!',
+        "정답을 알겠다면, '!정답 [생각하는 정답]을 채팅창에 입력해주세요.",
       ]}
     />
   );
