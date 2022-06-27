@@ -57,6 +57,15 @@ export default function Paint({ remained, current, onAnswer }: MainParams) {
       ) {
         setAnswer(args.join(''));
         setAnswerUser(current.state.username);
+
+        if (current.state.username !== channel) {
+          whisper(
+            channel,
+            `${current.state.username}님이 출제한 문제는 '${args.join(
+              ' '
+            )}' 입니다!`
+          );
+        }
       }
     }
   }, [current]);
